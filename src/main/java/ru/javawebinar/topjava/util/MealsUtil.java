@@ -27,6 +27,9 @@ public class MealsUtil {
         System.out.println();
         List<MealTo> mealsTo2 = filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(14, 0), 2000);
         mealsTo2.forEach(System.out::println);
+
+        new ArrayList<>(System.getenv().entrySet())
+                .forEach(System.out::println);
     }
 
     public static List<MealTo> filteredByCycles(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
