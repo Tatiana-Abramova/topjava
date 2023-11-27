@@ -2,8 +2,8 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealFrom;
-import ru.javawebinar.topjava.storage.Storage;
+import ru.javawebinar.topjava.storage.MealMemoryStorage;
+import ru.javawebinar.topjava.storage.MealStorage;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -13,94 +13,92 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-    private static final String STORAGE_TYPE_ENV = "STORAGE_TYPE";
 
-    private Storage storage;
+    private static final int CALORIES_PER_DAY = 2000;
+
+    private final MealStorage storage = new MealMemoryStorage();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-
-        try {
-            storage = (Storage) Class.forName(System.getenv(STORAGE_TYPE_ENV)).getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-                 ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        addTestMeal();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.debug("GET: " + request.getRequestURL() + "?" + request.getQueryString());
-        Integer id = getId(request);
+        log.debug("GET: {}?{}", request.getRequestURL(), request.getQueryString());
         String action = request.getParameter("action");
 
         if (action == null) {
-            log.debug("Get meal list");
-            request.setAttribute("meals", MealsUtil.getMealToList(storage.getAllMeal(), storage.getCaloriesPerDay()));
-            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+            showMeal(request, response);
             return;
         }
 
-        MealFrom mealFrom;
+        Integer id = getId(request);
+        Meal meal;
         switch (action) {
             case "delete":
-                log.debug("Delete meal: id = " + id);
+                log.debug("Delete meal: id = {}", id);
                 storage.delete(id);
                 response.sendRedirect("meals");
                 return;
             case "edit":
                 if (id == null) {
-                    mealFrom = new MealFrom();
+                    meal = new Meal();
                 } else {
-                    log.debug("Get meal: id = " + id);
-                    /* Я не уверена, что вообще нужен объект MealFrom
-                     * Но с другой стороны, если использовать Meal, будет ли правильно разрешать создавать его без id? */
-                    Meal meal = storage.get(id);
-                    mealFrom = new MealFrom(meal.getDateTime(), meal.getDescription(), meal.getCalories());
+                    log.debug("Get meal: id = {}", id);
+                    meal = storage.get(id);
                 }
+                request.setAttribute("meal", meal);
+                request.getRequestDispatcher(("/editMeal.jsp")).forward(request, response);
                 break;
             default:
-                throw new IllegalArgumentException("Action " + action + " is illegal");
+                showMeal(request, response);
         }
-        request.setAttribute("id", id);
-        request.setAttribute("meal", mealFrom);
-        request.getRequestDispatcher(
-                ("/edit.jsp")
-        ).forward(request, response);
-
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.debug("POST: " + request.getRequestURL() + "?" + request.getQueryString());
+        log.debug("POST: {}?{}", request.getRequestURL(), request.getQueryString());
         request.setCharacterEncoding("UTF-8");
         Integer id = getId(request);
-        MealFrom meal = new MealFrom(
-                DateTimeUtil.parse(request.getParameter("dateTime")),
+        Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("dateTime"), DateTimeUtil.FORMATTER),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
-        if (id == null) {
-            log.debug("Save meal: " + meal);
-            storage.save(meal);
-        } else {
-            log.debug("Update meal: " + meal);
-            storage.update(id, meal);
+        if (id != null) {
+            meal.setId(id);
         }
+        log.debug("Save meal: {}", meal);
+        storage.save(meal);
         response.sendRedirect("meals");
     }
 
     private Integer getId(HttpServletRequest request) {
         String id = request.getParameter("id");
-        if (id == null || id.trim().length() == 0) {
-            return null;
-        }
-        return Integer.parseInt(id);
+        return (id == null || id.isEmpty()) ? null : Integer.parseInt(id);
+    }
+
+    private void showMeal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("Get meal list");
+        request.setAttribute("meals", MealsUtil.getMealToList(storage.getAll(), CALORIES_PER_DAY));
+        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+    }
+
+    private void addTestMeal() {
+        storage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        storage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        storage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        storage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        storage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        storage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        storage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 }

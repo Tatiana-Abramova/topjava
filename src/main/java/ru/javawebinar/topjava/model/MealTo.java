@@ -1,14 +1,12 @@
 package ru.javawebinar.topjava.model;
 
-import ru.javawebinar.topjava.util.DateTimeUtil;
-
 import java.time.LocalDateTime;
 
 public class MealTo {
-
     private final int id;
 
     private final LocalDateTime dateTime;
+
     private final String description;
 
     private final int calories;
@@ -37,8 +35,8 @@ public class MealTo {
         return id;
     }
 
-    public String getDateTime() {
-        return dateTime.format(DateTimeUtil.FORMATTER);
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
     public String getDescription() {

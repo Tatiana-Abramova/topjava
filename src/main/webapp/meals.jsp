@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -21,10 +22,12 @@
         </tr>
         <c:forEach items="${meals}" var="meal">
             <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
-            <tr>
-                <td style="${meal.isExcess() eq true ? 'color: red':'color: green'}">${meal.getDateTime()}</td>
-                <td style="${meal.isExcess() eq true ? 'color: red':'color: green'}">${meal.getDescription()}</td>
-                <td style="${meal.isExcess() eq true ? 'color: red':'color: green'}">${meal.getCalories()}</td>
+            <fmt:parseDate value="${meal.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
+            <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateTime}" var="dateTime"/>
+            <tr style="color: ${meal.excess ? 'red' : 'green'}">
+                <td>${dateTime}</td>
+                <td>${meal.description}</td>
+                <td>${meal.calories}</td>
                 <td><a href="meals?id=${meal.id}&action=edit">Edit</a></td>
                 <td><a href="meals?id=${meal.id}&action=delete">Delete</a></td>
             </tr>
