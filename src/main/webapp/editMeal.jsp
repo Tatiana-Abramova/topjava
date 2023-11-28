@@ -11,12 +11,7 @@
     <title>Meal</title>
 </head>
 <body>
-    <c:if test="${empty meal.id}">
-        <h2>Add Meal</h2>
-    </c:if>
-    <c:if test="${not empty meal.id}">
-        <h2>Edit Meal</h2>
-    </c:if>
+    <h2>${empty meal.id ? 'Add Meal' : 'Edit Meal'}</h2>
 <section>
     <form method="post" action="meals" onsubmit="return verify()" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="id" value="${meal.id}" required>
@@ -26,7 +21,7 @@
             <label for="description">Description:</label>
             <span><input type="text" id="description" name="description" size=50 value="${meal.description}"/></span>
             <label for="calories">Calories:</label>
-            <span><input type="text" id="calories" name="calories" size=50 value="${meal.calories}" onkeypress="return isNumber(event)"/></span>
+            <span><input type="number" id="calories" name="calories" size=50 value="${meal.calories}"/></span>
         </div>
         <hr>
         <input type="submit" value="Save"></button>
@@ -49,25 +44,17 @@
                      return false;
         }
     }
-    function isNumber(evt) {
-        evt = (evt) ? evt : window.event;
-        var charCode = (evt.which) ? evt.which : evt.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
-        }
-        return true;
-    }
     function getDate() {
-        var currentdate = new Date();
-        var datetime =  currentdate.getFullYear() + "-"
-                        + (currentdate.getMonth()+1)  + "-"
-                        + currentdate.getDate() + " "
-                        + currentdate.getHours() + ":"
-                        + currentdate.getMinutes();
-        if ("${meal.dateTime}".trim().length == 0) {
-            return datetime;
-        } else {
+        if ("${meal.id}".trim().length != 0) {
             return "${meal.dateTime}";
+        } else {
+            var currentdate = new Date();
+            var datetime =  currentdate.getFullYear() + "-"
+                            + (currentdate.getMonth()+1)  + "-"
+                            + currentdate.getDate() + " "
+                            + currentdate.getHours() + ":"
+                            + currentdate.getMinutes();
+            return datetime;
         }
     }
 </script>
