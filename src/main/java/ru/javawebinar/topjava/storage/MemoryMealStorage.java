@@ -38,8 +38,10 @@ public class MemoryMealStorage implements MealStorage {
     public Meal save(Meal meal) {
         if (meal.getId() == null) {
             meal.setId(getId());
+            meals.put(meal.getId(), meal);
+            return meal;
         }
-        return meals.merge(meal.getId(), meal, (k, v) -> meal);
+        return meals.replace(meal.getId(), meal) == null ? null : meal;
     }
 
     private int getId() {
