@@ -20,7 +20,6 @@ public class MemoryMealStorage implements MealStorage {
     public MemoryMealStorage() {
         Arrays.asList(
                         new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-                        new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                         new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
                         new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
                         new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
@@ -40,12 +39,7 @@ public class MemoryMealStorage implements MealStorage {
         if (meal.getId() == null) {
             meal.setId(getId());
         }
-        try {
-            meals.replace(meal.getId(), meal);
-            return meal;
-        } catch (NullPointerException e) {
-            return null;
-        }
+        return meals.merge(meal.getId(), meal, (k, v) -> meal);
     }
 
     private int getId() {
