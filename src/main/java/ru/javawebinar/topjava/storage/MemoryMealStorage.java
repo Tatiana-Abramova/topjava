@@ -40,7 +40,11 @@ public class MemoryMealStorage implements MealStorage {
         if (meal.getId() == null) {
             meal.setId(getId());
         }
-        return meals.replace(meal.getId(), meal);
+        try {
+            return meals.replace(meal.getId(), meal);
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     private int getId() {
