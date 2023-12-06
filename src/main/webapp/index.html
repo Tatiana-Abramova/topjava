@@ -6,9 +6,21 @@
 <body>
 <h3>Проект <a href="https://github.com/JavaWebinar/topjava" target="_blank">Java Enterprise (Topjava)</a></h3>
 <hr>
+<!--Не уверена, что правильно поняла 8 задание. Сделала выбор пользователя при переходе по ссылке Users-->
+<p><select size="3" id="user" name="user">
+    <option disabled>Select user</option>
+    <option value="1" selected>user 1</option>
+    <option value="2">user 2</option>
+</select></p>
+<br>
 <ul style="font-size: large">
-    <li><a href="users">Users</a></li>
+    <li><a href="users?user=" onClick="getUser(this)">Users</a></li>
     <li><a href="meals">Meals</a></li>
 </ul>
+<script type="text/javascript">
+    function getUser(link) {
+        link.href = link.href + document.getElementById("user").value;
+    }
+</script>
 </body>
 </html>

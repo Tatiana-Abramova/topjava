@@ -21,6 +21,21 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
+    <form method="post" action="meals?action=filter">
+        <div class="filter">
+            <label for="startDate">Start date:</label>
+            <input type="date" name="startDate" id="startDate" value="${startDate}">
+            <label for="endDate">End date:</label>
+            <input type="date" name="endDate" id="endDate" value="${endDate}">
+            <label for="startTime">Start time:</label>
+            <input type="time" name="startTime" id="startTime" value="${startTime}">
+            <label for="endTime">End time:</label>
+            <input type="time" name="endTime" id="endTime" value="${startTime}">
+        </div>
+        <br>
+        <button type="submit">Filter</button>
+        <button onclick="ClearFields();" type="button">Clear</button>
+    </form>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
@@ -34,7 +49,7 @@
         </tr>
         </thead>
         <c:forEach items="${requestScope.meals}" var="meal">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
+            <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
@@ -50,5 +65,13 @@
         </c:forEach>
     </table>
 </section>
+<script type="text/javascript">
+    function ClearFields() {
+         document.getElementById("startDate").value = "";
+         document.getElementById("endDate").value = "";
+         document.getElementById("startTime").value = "";
+         document.getElementById("endTime").value = "";
+    }
+</script>
 </body>
 </html>
