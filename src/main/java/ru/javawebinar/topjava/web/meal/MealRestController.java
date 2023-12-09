@@ -18,14 +18,14 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
 public class MealRestController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private MealService service;
 
     public List<MealTo> getAll() {
         log.info("getAll for userId={}", SecurityUtil.authUserId());
-        return getAll(null, null, null, null);
+        return service.getAll(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay());
     }
 
     public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
@@ -41,8 +41,7 @@ public class MealRestController {
     public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
-        meal.setUserId(SecurityUtil.authUserId());
-        return service.create(meal);
+        return service.create(meal, SecurityUtil.authUserId());
     }
 
     public void delete(int id) {

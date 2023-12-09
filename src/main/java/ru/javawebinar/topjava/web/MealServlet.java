@@ -41,27 +41,11 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
-        String action = request.getParameter("action");
-        if ("filter".equals(action)) {
-            log.info("getFiltered");
-            LocalDate startDate = parseDate(request.getParameter("startDate"));
-            LocalDate endDate = parseDate(request.getParameter("endDate"));
-            LocalTime startTime = parseTime(request.getParameter("startTime"));
-            LocalTime endTime = parseTime(request.getParameter("endTime"));
-            request.setAttribute("startDate", request.getParameter("startDate"));
-            request.setAttribute("endDate", request.getParameter("endDate"));
-            request.setAttribute("startTime", request.getParameter("startTime"));
-            request.setAttribute("endTime", request.getParameter("endTime"));
-            request.setAttribute("meals", mealRestController.getAll(startDate, endDate, startTime, endTime));
-            request.getRequestDispatcher("/meals.jsp").forward(request, response);
-            return;
-        }
         String id = request.getParameter("id");
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")),
-                SecurityUtil.authUserId());
+                Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
         if (id.isEmpty()) {
@@ -74,9 +58,21 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        SecurityUtil.authenticate(request);
         String action = request.getParameter("action");
-
         switch (action == null ? "all" : action) {
+            case "filter":
+                log.info("getFiltered");
+                LocalDate startDate = parseDate(request.getParameter("startDate"));
+                LocalDate endDate = parseDate(request.getParameter("endDate"));
+                LocalTime startTime = parseTime(request.getParameter("startTime"));
+                LocalTime endTime = parseTime(request.getParameter("endTime"));
+                request.setAttribute("startDate", request.getParameter("startDate"));
+                request.setAttribute("endDate", request.getParameter("endDate"));
+                request.setAttribute("startTime", request.getParameter("startTime"));
+                request.setAttribute("endTime", request.getParameter("endTime"));
+                request.setAttribute("meals", mealRestController.getAll(startDate, endDate, startTime, endTime));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
             case "delete":
                 int id = getId(request);
                 log.info("Delete id={}", id);

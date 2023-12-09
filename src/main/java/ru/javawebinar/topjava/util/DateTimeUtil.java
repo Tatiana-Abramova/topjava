@@ -10,25 +10,11 @@ public class DateTimeUtil {
 
     // Не сделала "Попробуйте использовать LocalDateTime вместо LocalDate с прицелом на то, что в DB будет тип даты timestamp."
     public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        boolean result = true;
-        if (startTime != null) {
-            result = lt.compareTo(startTime) >= 0;
-        }
-        if (endTime != null) {
-            result = result && lt.compareTo(endTime) < 0;
-        }
-        return result;
+        return (startTime == null || lt.compareTo(startTime) >= 0) && (endTime == null || lt.compareTo(endTime) < 0);
     }
 
     public static boolean isBetweenDates(LocalDate ld, LocalDate startDate, LocalDate endDate) {
-        boolean result = true;
-        if (startDate != null) {
-            result = ld.compareTo(startDate) >= 0;
-        }
-        if (endDate != null) {
-            result = result && ld.compareTo(endDate) <= 0;
-        }
-        return result;
+        return (startDate == null || ld.compareTo(startDate) >= 0) && (endDate == null || ld.compareTo(endDate) <= 0);
     }
 
     public static String toString(LocalDateTime ldt) {

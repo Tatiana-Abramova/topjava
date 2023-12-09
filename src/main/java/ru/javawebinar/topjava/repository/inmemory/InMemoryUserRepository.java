@@ -35,8 +35,7 @@ public class InMemoryUserRepository implements UserRepository {
             repository.put(user.getId(), user);
             return user;
         }
-        // handle case: update, but not present in storage
-        return repository.computeIfPresent(user.getId(), (id, oldMeal) -> user);
+        return repository.computeIfPresent(user.getId(), (id, oldUser) -> user);
     }
 
     @Override
@@ -49,12 +48,12 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> getAll() {
         log.info("getAll");
         List<User> users = new ArrayList<>(repository.values());
-        users.sort(Comparator.comparing(User::getName));
+        users.sort(Comparator.comparing(User::getName).thenComparing(User::getEmail));
         return users;
     }
 
     @Override
-    public User getByEmail(String email) { // нужно ли сейчас проверять на уникальность email при добавлении/изменении пользователя?
+    public User getByEmail(String email) {
         log.info("getByEmail {}", email);
         return repository.values().stream()
                 .filter(u -> u.getEmail().equals(email))

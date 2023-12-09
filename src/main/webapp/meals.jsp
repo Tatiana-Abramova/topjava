@@ -18,11 +18,13 @@
 </head>
 <body>
 <section>
-    <h3><a href="index.html">Home</a></h3>
+    <h3><a href="users">Home</a></h3>
+    <h3><a href="index.html">Logout</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <form method="post" action="meals?action=filter">
+    <form method="get" action="meals">
         <div class="filter">
+            <input type="hidden" name="action" value="filter">
             <label for="startDate">Start date:</label>
             <input type="date" name="startDate" id="startDate" value="${startDate}">
             <label for="endDate">End date:</label>
@@ -30,11 +32,11 @@
             <label for="startTime">Start time:</label>
             <input type="time" name="startTime" id="startTime" value="${startTime}">
             <label for="endTime">End time:</label>
-            <input type="time" name="endTime" id="endTime" value="${startTime}">
+            <input type="time" name="endTime" id="endTime" value="${endTime}">
         </div>
         <br>
         <button type="submit">Filter</button>
-        <button onclick="ClearFields();" type="button">Clear</button>
+        <button onclick="ClearFields();" type="submit">Clear</button>
     </form>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
