@@ -15,15 +15,22 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.info("Logging in with userId=" + request.getParameter("user"));
-        SecurityUtil.authenticate(request); // тут, вероятно, нужно перейти на ProfileRestController?
+        log.info("Logging in with userId={}", request.getParameter("user"));
+        authenticate(request);
         response.sendRedirect("meals");
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("forward to users");
-        request.setAttribute("user", SecurityUtil.authUserId());
         request.getRequestDispatcher("/users.jsp").forward(request, response);
+    }
+
+    private void authenticate(HttpServletRequest request) {
+        String user = request.getParameter("user");
+        if (user != null) {
+            SecurityUtil.setAuthUserId(Integer.parseInt(user));
+            log.info("Logged in with userId=" + user);
+        }
     }
 }

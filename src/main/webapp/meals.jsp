@@ -18,21 +18,20 @@
 </head>
 <body>
 <section>
-    <h3><a href="users">Home</a></h3>
-    <h3><a href="index.html">Logout</a></h3>
+    <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
     <form method="get" action="meals">
         <div class="filter">
             <input type="hidden" name="action" value="filter">
             <label for="startDate">Start date:</label>
-            <input type="date" name="startDate" id="startDate" value="${startDate}">
+            <input type="date" name="startDate" id="startDate" value="<%=request.getParameter("startDate")%>">
             <label for="endDate">End date:</label>
-            <input type="date" name="endDate" id="endDate" value="${endDate}">
+            <input type="date" name="endDate" id="endDate" value="<%=request.getParameter("endDate")%>">
             <label for="startTime">Start time:</label>
-            <input type="time" name="startTime" id="startTime" value="${startTime}">
+            <input type="time" name="startTime" id="startTime" value="<%=request.getParameter("startTime")%>">
             <label for="endTime">End time:</label>
-            <input type="time" name="endTime" id="endTime" value="${endTime}">
+            <input type="time" name="endTime" id="endTime" value="<%=request.getParameter("endTime")%>">
         </div>
         <br>
         <button type="submit">Filter</button>
