@@ -30,7 +30,7 @@ public class UserServlet extends HttpServlet {
         String user = request.getParameter("user");
         if (user != null) {
             SecurityUtil.setAuthUserId(Integer.parseInt(user));
-            log.info("Logged in with userId=" + user);
+            log.info("Logged in with userId={}", user);
         }
     }
 }

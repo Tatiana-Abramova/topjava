@@ -25,13 +25,13 @@
         <div class="filter">
             <input type="hidden" name="action" value="filter">
             <label for="startDate">Start date:</label>
-            <input type="date" name="startDate" id="startDate" value="<%=request.getParameter("startDate")%>">
+            <input type="date" name="startDate" id="startDate" value="${param.startDate}">
             <label for="endDate">End date:</label>
-            <input type="date" name="endDate" id="endDate" value="<%=request.getParameter("endDate")%>">
+            <input type="date" name="endDate" id="endDate" value="${param.endDate}">
             <label for="startTime">Start time:</label>
-            <input type="time" name="startTime" id="startTime" value="<%=request.getParameter("startTime")%>">
+            <input type="time" name="startTime" id="startTime" value="${param.startTime}">
             <label for="endTime">End time:</label>
-            <input type="time" name="endTime" id="endTime" value="<%=request.getParameter("endTime")%>">
+            <input type="time" name="endTime" id="endTime" value="${param.endTime}">
         </div>
         <br>
         <button type="submit">Filter</button>
