@@ -30,11 +30,12 @@ public class MealsUtil {
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
         return getTos(meals, caloriesPerDay, m -> true);
     }
+
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
         return getTos(meals, caloriesPerDay, m -> DateTimeUtil.isBetweenHalfOpen(m.getTime(), startTime, endTime));
     }
 
-    public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
+    private static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))

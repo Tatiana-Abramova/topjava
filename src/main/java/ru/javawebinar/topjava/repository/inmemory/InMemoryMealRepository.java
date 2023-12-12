@@ -31,15 +31,14 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal save(Meal meal, int userId) {
         log.info("save {}", meal);
-        Map<Integer, Meal> meals;
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            meals = repository.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
+            Map<Integer, Meal> meals = repository.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
             meals.put(meal.getId(), meal);
             log.info("saved new meal with id={}", meal.getId());
             return meal;
         } else {
-            meals = repository.get(userId);
+            Map<Integer, Meal> meals = repository.get(userId);
             return meals == null ? null :
                     meals.replace(meal.getId(), meal) == null ? null : meal;
         }
