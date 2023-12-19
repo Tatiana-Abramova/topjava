@@ -18,6 +18,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -40,11 +42,13 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal meal = service.get(MEAL_ID_1_1, USER_ID);
-        assertMatch(meal, meals1_0.get(0));
+        assertMatch(meal, MEAL_1_1);
     }
 
+    @Test
     public void getNotFound() {
         assertThrows(NotFoundException.class, () -> service.get(MEAL_ID_1_1, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND_MEAL_ID, USER_ID));
     }
 
     @Test
@@ -56,18 +60,19 @@ public class MealServiceTest {
     @Test
     public void deleteNotFound() {
         assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID_1_0, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND_MEAL_ID, USER_ID));
     }
 
     @Test
     public void getBetweenInclusive() {
         List<Meal> actual = service.getBetweenInclusive(LocalDate.of(2020, Month.JANUARY, 29), LocalDate.of(2020, Month.JANUARY, 29), USER_ID);
-        assertMatch(actual, meals1_0);
+        assertMatch(actual, userMeals1);
     }
 
     @Test
     public void getAll() {
         List<Meal> actual = service.getAll(ADMIN_ID);
-        assertMatch(actual, meals2);
+        assertMatch(actual, adminMeals);
     }
 
     @Test
@@ -79,7 +84,10 @@ public class MealServiceTest {
 
     @Test
     public void updateNotFound() {
-        assertThrows(NotFoundException.class, () -> service.update(getUpdated(), ADMIN_ID));
+        Meal meal = getUpdated();
+        assertThrows(NotFoundException.class, () -> service.update(meal, ADMIN_ID));
+        meal.setId(NOT_FOUND_MEAL_ID);
+        assertThrows(NotFoundException.class, () -> service.update(meal, USER_ID));
     }
 
     @Test
@@ -94,8 +102,10 @@ public class MealServiceTest {
 
     @Test
     public void duplicateDateTimeCreate() {
-        Meal meal = meals1_0.get(0);
+        Meal meal = MEAL_1_1;
         meal.setId(null);
+        meal.setCalories(meal.getCalories() + 10);
+        meal.setDescription(meal.getDescription() + "test");
         assertThrows(DuplicateKeyException.class, () -> service.create(meal, USER_ID));
     }
 }

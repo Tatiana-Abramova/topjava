@@ -13,21 +13,19 @@ import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 public class MealTestData {
     public static final int MEAL_ID_1_0 = START_SEQ + 3;
     public static final int MEAL_ID_1_1 = START_SEQ + 4;
-    public static final int USER_ID = UserTestData.USER_ID;
-    public static final int ADMIN_ID = UserTestData.ADMIN_ID;
+    public static final int NOT_FOUND_MEAL_ID = 1;
+    public static final Meal MEAL_1_0 = new Meal(MEAL_ID_1_0, LocalDateTime.of(2020, Month.JANUARY, 29, 0, 0), "Еда", 100);
+    public static final Meal MEAL_1_1 = new Meal(MEAL_ID_1_1, LocalDateTime.of(2020, Month.JANUARY, 29, 10, 0), "Завтрак", 1000);
 
-    public static final List<Meal> meals1_0 = Arrays.asList(
-            new Meal(MEAL_ID_1_1, LocalDateTime.of(2020, Month.JANUARY, 29, 10, 0), "Завтрак", 1000),
-            new Meal(MEAL_ID_1_0, LocalDateTime.of(2020, Month.JANUARY, 29, 0, 0), "Еда", 100)
-    );
+    public static final List<Meal> userMeals1 = Arrays.asList(MEAL_1_1, MEAL_1_0);
 
-    public static final List<Meal> meals1_1 = Arrays.asList(
+    public static final List<Meal> userMeals2 = Arrays.asList(
             new Meal(START_SEQ + 7, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
             new Meal(START_SEQ + 6, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
             new Meal(START_SEQ + 5, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500)
     );
 
-    public static final List<Meal> meals2 = Arrays.asList(
+    public static final List<Meal> adminMeals = Arrays.asList(
             new Meal(START_SEQ + 11, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410),
             new Meal(START_SEQ + 10, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
             new Meal(START_SEQ + 9, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
