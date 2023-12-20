@@ -42,13 +42,17 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal meal = service.get(MEAL_ID_1_1, USER_ID);
-        assertMatch(meal, MEAL_1_1);
+        assertMatch(meal, userMeal1_1);
     }
 
     @Test
     public void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(MEAL_ID_1_1, ADMIN_ID));
         assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND_MEAL_ID, USER_ID));
+    }
+
+    @Test
+    public void getWrongUser() {
+        assertThrows(NotFoundException.class, () -> service.get(MEAL_ID_1_1, ADMIN_ID));
     }
 
     @Test
@@ -59,8 +63,12 @@ public class MealServiceTest {
 
     @Test
     public void deleteNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID_1_0, ADMIN_ID));
         assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND_MEAL_ID, USER_ID));
+    }
+
+    @Test
+    public void deleteWrongUser() {
+        assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID_1_0, ADMIN_ID));
     }
 
     @Test
@@ -85,9 +93,14 @@ public class MealServiceTest {
     @Test
     public void updateNotFound() {
         Meal meal = getUpdated();
-        assertThrows(NotFoundException.class, () -> service.update(meal, ADMIN_ID));
         meal.setId(NOT_FOUND_MEAL_ID);
         assertThrows(NotFoundException.class, () -> service.update(meal, USER_ID));
+    }
+
+    @Test
+    public void updateWrongUser() {
+        Meal meal = getUpdated();
+        assertThrows(NotFoundException.class, () -> service.update(meal, ADMIN_ID));
     }
 
     @Test
@@ -102,10 +115,7 @@ public class MealServiceTest {
 
     @Test
     public void duplicateDateTimeCreate() {
-        Meal meal = MEAL_1_1;
-        meal.setId(null);
-        meal.setCalories(meal.getCalories() + 10);
-        meal.setDescription(meal.getDescription() + "test");
+        Meal meal = new Meal(userMeal1_0.getDateTime(), userMeal1_0.getDescription() + "test", userMeal1_0.getCalories() + 10);
         assertThrows(DuplicateKeyException.class, () -> service.create(meal, USER_ID));
     }
 }

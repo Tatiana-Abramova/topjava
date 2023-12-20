@@ -14,10 +14,10 @@ public class MealTestData {
     public static final int MEAL_ID_1_0 = START_SEQ + 3;
     public static final int MEAL_ID_1_1 = START_SEQ + 4;
     public static final int NOT_FOUND_MEAL_ID = 1;
-    public static final Meal MEAL_1_0 = new Meal(MEAL_ID_1_0, LocalDateTime.of(2020, Month.JANUARY, 29, 0, 0), "Еда", 100);
-    public static final Meal MEAL_1_1 = new Meal(MEAL_ID_1_1, LocalDateTime.of(2020, Month.JANUARY, 29, 10, 0), "Завтрак", 1000);
+    public static final Meal userMeal1_0 = new Meal(MEAL_ID_1_0, LocalDateTime.of(2020, Month.JANUARY, 29, 0, 0), "Еда", 100);
+    public static final Meal userMeal1_1 = new Meal(MEAL_ID_1_1, LocalDateTime.of(2020, Month.JANUARY, 29, 10, 0), "Завтрак", 1000);
 
-    public static final List<Meal> userMeals1 = Arrays.asList(MEAL_1_1, MEAL_1_0);
+    public static final List<Meal> userMeals1 = Arrays.asList(userMeal1_1, userMeal1_0);
 
     public static final List<Meal> userMeals2 = Arrays.asList(
             new Meal(START_SEQ + 7, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
