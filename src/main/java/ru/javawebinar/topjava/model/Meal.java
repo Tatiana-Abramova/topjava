@@ -18,7 +18,7 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET description=:description, calories=:calories, date_time=:dateTime WHERE m.id=:id AND m.user.id=:userId"),
 })
 @Entity
-@Table(name = "meal")
+@Table(name = "meal", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "date_time" }) })
 public class Meal extends AbstractBaseEntity {
     public static final String DELETE = "Meal.delete";
 
