@@ -1,19 +1,29 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Ignore;
+import org.junit.AfterClass;
+import org.junit.AssumptionViolatedException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -26,11 +36,59 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@Ignore
+@Transactional
+@Rollback(false)
 public class MealServiceTest {
+    private static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
+
+    private static final List<String> testsStatistics = new ArrayList<>();
 
     @Autowired
     private MealService service;
+
+    @AfterClass
+    public static void logStatistics() {
+        StringBuilder result = new StringBuilder();
+        for (String s : testsStatistics) {
+            result.append("\n").append(s);
+        }
+        logger.info(result.toString());
+    }
+
+    @Rule
+    public Stopwatch stopwatch = new Stopwatch() {
+
+        private void logInfo(Description description, String status, long nanos) {
+            String testName = description.getMethodName();
+            logger.info(String.format("Test %s %s, spent %d ms",
+                    testName, status, TimeUnit.NANOSECONDS.toMillis(nanos)));
+        }
+
+        private void collectInfo(Description description, long nanos) {
+            testsStatistics.add(String.format("%s - %d ms",
+                    description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos)));
+        }
+
+        @Override
+        protected void succeeded(long nanos, Description description) {
+            logInfo(description, "succeeded", nanos);
+        }
+
+        @Override
+        protected void failed(long nanos, Throwable e, Description description) {
+            logInfo(description, "failed", nanos);
+        }
+
+        @Override
+        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+            logInfo(description, "skipped", nanos);
+        }
+
+        @Override
+        protected void finished(long nanos, Description description) {
+            collectInfo(description, nanos);
+        }
+    };
 
     @Test
     public void delete() {
@@ -60,7 +118,7 @@ public class MealServiceTest {
 
     @Test
     public void duplicateDateTimeCreate() {
-        assertThrows(DataAccessException.class, () ->
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () ->
                 service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
     }
 
