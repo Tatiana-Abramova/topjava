@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.repository.jpa;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
@@ -11,6 +10,10 @@ import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,20 +30,24 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        User user = new User();
-        user.setId(userId);
-        meal.setUser(user);
+        User userRef = manager.getReference(User.class, userId);
+        meal.setUser(userRef);
         if (meal.isNew()) {
             manager.persist(meal);
             return meal;
         } else {
-            return manager.createNamedQuery(Meal.UPDATE)
-                    .setParameter("id", meal.getId())
-                    .setParameter("userId", userId)
-                    .setParameter("dateTime", meal.getDateTime())
-                    .setParameter("description", meal.getDescription())
-                    .setParameter("calories", meal.getCalories())
-                    .executeUpdate() != 0 ? meal : null;
+            CriteriaBuilder builder = manager.getCriteriaBuilder();
+            CriteriaUpdate<Meal> update = builder.createCriteriaUpdate(Meal.class);
+            Root<Meal> root = update.from(Meal.class);
+
+            update.set("dateTime", meal.getDateTime());
+            update.set("description", meal.getDescription());
+            update.set("calories", meal.getCalories());
+            update.where(builder.and(
+                    builder.equal(root.get("id"), meal.getId()),
+                    builder.equal(root.get("user").get("id"), userId)));
+
+            return manager.createQuery(update).executeUpdate() != 0 ? meal : null;
         }
     }
 
@@ -55,11 +62,15 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> meal = manager.createNamedQuery(Meal.GET, Meal.class)
-                .setParameter("id", id)
-                .setParameter("userId", userId)
-                .getResultList();
-        return DataAccessUtils.singleResult(meal);
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Meal> query = builder.createQuery(Meal.class);
+        Root<Meal> root = query.from(Meal.class);
+        query.select(root).where(
+                builder.and(
+                        builder.equal(root.get("id"), id),
+                        builder.equal(root.get("user").get("id"), userId)));
+
+        return manager.createQuery(query).getSingleResult();
     }
 
     @Override

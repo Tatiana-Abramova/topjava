@@ -11,15 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -37,15 +36,25 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@Transactional
-@Rollback(false)
 public class MealServiceTest {
-    private static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
 
     private static final List<String> testsStatistics = new ArrayList<>();
 
     @Autowired
     private MealService service;
+
+    @Rule
+    public Stopwatch stopwatch = new Stopwatch() {
+
+        @Override
+        protected void finished(long nanos, Description description) {
+            String info = String.format("%-30s %d ms",
+                    description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            log.info(info);
+            testsStatistics.add(info);
+        }
+    };
 
     @AfterClass
     public static void logStatistics() {
@@ -53,48 +62,13 @@ public class MealServiceTest {
         for (String s : testsStatistics) {
             result.append("\n").append(s);
         }
-        logger.info(result.toString());
+        log.info(result.toString());
     }
-
-    @Rule
-    public Stopwatch stopwatch = new Stopwatch() {
-
-        private void logInfo(Description description, String status, long nanos) {
-            String testName = description.getMethodName();
-            logger.info(String.format("Test %s %s, spent %d ms",
-                    testName, status, TimeUnit.NANOSECONDS.toMillis(nanos)));
-        }
-
-        private void collectInfo(Description description, long nanos) {
-            testsStatistics.add(String.format("%s - %d ms",
-                    description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos)));
-        }
-
-        @Override
-        protected void succeeded(long nanos, Description description) {
-            logInfo(description, "succeeded", nanos);
-        }
-
-        @Override
-        protected void failed(long nanos, Throwable e, Description description) {
-            logInfo(description, "failed", nanos);
-        }
-
-        @Override
-        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
-            logInfo(description, "skipped", nanos);
-        }
-
-        @Override
-        protected void finished(long nanos, Description description) {
-            collectInfo(description, nanos);
-        }
-    };
 
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
+        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
@@ -131,12 +105,12 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
+        assertThrows(NoResultException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
 
     @Test
     public void getNotOwn() {
-        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
+        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
