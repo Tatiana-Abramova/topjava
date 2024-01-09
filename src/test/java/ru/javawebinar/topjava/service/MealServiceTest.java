@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
-import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
@@ -18,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -58,17 +56,17 @@ public class MealServiceTest {
 
     @AfterClass
     public static void logStatistics() {
-        StringBuilder result = new StringBuilder();
+        String result = "";
         for (String s : testsStatistics) {
-            result.append("\n").append(s);
+            result = String.join("\n", s);
         }
-        log.info(result.toString());
+        log.info(result);
     }
 
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
-        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
@@ -105,12 +103,12 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() {
-        assertThrows(NoResultException.class, () -> service.get(NOT_FOUND, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
 
     @Test
     public void getNotOwn() {
-        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
