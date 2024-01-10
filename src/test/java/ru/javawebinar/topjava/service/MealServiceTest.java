@@ -56,10 +56,7 @@ public class MealServiceTest {
 
     @AfterClass
     public static void logStatistics() {
-        String result = "";
-        for (String s : testsStatistics) {
-            result = String.join("\n", s);
-        }
+        String result = String.join("\n", testsStatistics);
         log.info(result);
     }
 

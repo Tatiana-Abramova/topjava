@@ -43,6 +43,9 @@ public class Meal extends AbstractBaseEntity {
     @NotNull
     private User user;
 
+    @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
+    private Integer userId;
+
     public Meal() {
     }
 
@@ -100,6 +103,10 @@ public class Meal extends AbstractBaseEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Integer getUserId() {
+        return userId;
     }
 
     @Override
