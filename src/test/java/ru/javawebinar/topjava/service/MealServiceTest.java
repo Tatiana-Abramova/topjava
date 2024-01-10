@@ -57,7 +57,7 @@ public class MealServiceTest {
     @AfterClass
     public static void logStatistics() {
         String result = String.join("\n", testsStatistics);
-        log.info(result);
+        log.info("\n" + result);
     }
 
     @Test
