@@ -16,8 +16,12 @@ import java.util.List;
 
 public class SpringMain {
     public static void main(String[] args) {
-        // java 7 automatic resource management (ARM)
-        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/inmemory.xml")) {
+        ConfigurableApplicationContext appCtx = null;
+        try (ConfigurableApplicationContext parentAppCtx = new ClassPathXmlApplicationContext()) {
+            parentAppCtx.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.getActiveRepositoryProfile());
+            parentAppCtx.refresh();
+            appCtx = new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml", "spring/spring-db.xml"}, parentAppCtx);
+
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
@@ -31,6 +35,10 @@ public class SpringMain {
             filteredMealsWithExcess.forEach(System.out::println);
             System.out.println();
             System.out.println(mealController.getBetween(null, null, null, null));
+        } finally {
+            if (appCtx != null) {
+                appCtx.close();
+            }
         }
     }
 }

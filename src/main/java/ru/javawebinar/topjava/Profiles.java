@@ -2,7 +2,11 @@ package ru.javawebinar.topjava;
 
 import org.springframework.util.ClassUtils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Profiles {
+
     public static final String
             JDBC = "jdbc",
             JPA = "jpa",
@@ -23,5 +27,14 @@ public class Profiles {
         } else {
             throw new IllegalStateException("Could not find DB driver");
         }
+    }
+
+    public static String getActiveRepositoryProfile() {
+        final String activeProfile = System.getProperty("spring.profiles.active");
+        if (activeProfile == null) {
+            return REPOSITORY_IMPLEMENTATION;
+        }
+        Matcher matcher = Pattern.compile(JDBC + "|" + JPA + "|" + DATAJPA).matcher(activeProfile);
+        return matcher.find() ? matcher.group() : REPOSITORY_IMPLEMENTATION;
     }
 }
