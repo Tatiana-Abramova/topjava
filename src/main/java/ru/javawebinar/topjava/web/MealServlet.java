@@ -22,24 +22,20 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 public class MealServlet extends HttpServlet {
-    private ConfigurableApplicationContext parentSpringContext;
-
     private ConfigurableApplicationContext springContext;
 
     private MealRestController mealController;
 
     @Override
     public void init() {
-        parentSpringContext = new ClassPathXmlApplicationContext();
-        parentSpringContext.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.getActiveRepositoryProfile());
-        parentSpringContext.refresh();
-        springContext = new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml", "spring/spring-db.xml"}, parentSpringContext);
+        springContext = new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml", "spring/spring-db.xml"}, false);
+        springContext.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.getActiveRepositoryProfile());
+        springContext.refresh();
         mealController = springContext.getBean(MealRestController.class);
     }
 
     @Override
     public void destroy() {
-        parentSpringContext.close();
         springContext.close();
         super.destroy();
     }

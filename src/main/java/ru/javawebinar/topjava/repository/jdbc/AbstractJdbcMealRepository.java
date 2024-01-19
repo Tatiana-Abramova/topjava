@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +23,6 @@ public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
 
     private final SimpleJdbcInsert insertMeal;
 
-    @Autowired
     public AbstractJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
@@ -82,5 +80,5 @@ public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
                 ROW_MAPPER, userId, getDateTime(startDateTime), getDateTime(endDateTime));
     }
 
-    abstract protected T getDateTime(LocalDateTime dateTime);
+    protected abstract T getDateTime(LocalDateTime dateTime);
 }

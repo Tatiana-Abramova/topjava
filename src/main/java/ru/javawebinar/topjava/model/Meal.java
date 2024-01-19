@@ -41,9 +41,12 @@ public class Meal extends AbstractBaseEntity {
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @NotNull
     private User user;
+
+    @Column(name = "user_id", insertable = false, updatable = false)
+    private int userId;
 
     public Meal() {
     }
@@ -53,10 +56,15 @@ public class Meal extends AbstractBaseEntity {
     }
 
     public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
+        this(id, dateTime, description, calories, null);
+    }
+
+    public Meal(Integer id, LocalDateTime dateTime, String description, int calories, User user) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+        this.user = user;
     }
 
     public LocalDateTime getDateTime() {

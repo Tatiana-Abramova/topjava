@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.model;
 
 import org.hibernate.validator.constraints.Range;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -57,20 +56,20 @@ public class User extends AbstractNamedEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @OrderBy("dateTime DESC")
-    List<Meal> meals = new ArrayList<>();
+    private List<Meal> meals;
 
     public User() {
     }
 
     public User(User u) {
-        this(u.id, u.name, u.email, u.password, u.caloriesPerDay, u.enabled, u.registered, u.roles);
+        this(u.id, u.name, u.email, u.password, u.caloriesPerDay, u.enabled, u.registered, u.roles, u.meals);
     }
 
     public User(Integer id, String name, String email, String password, Role... roles) {
-        this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, new Date(), List.of(roles));
+        this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, new Date(), List.of(roles), null);
     }
 
-    public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Date registered, Collection<Role> roles) {
+    public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Date registered, Collection<Role> roles, List<Meal> meals) {
         super(id, name);
         this.email = email;
         this.password = password;
@@ -78,6 +77,7 @@ public class User extends AbstractNamedEntity {
         this.enabled = enabled;
         this.registered = registered;
         setRoles(roles);
+        setMeals(meals);
     }
 
     public String getEmail() {
@@ -133,8 +133,7 @@ public class User extends AbstractNamedEntity {
     }
 
     public void setMeals(List<Meal> meals) {
-        Assert.notNull(meals, "Meals must not be null");
-        this.meals = new ArrayList<>(meals);
+        this.meals = meals == null ? null : new ArrayList<>(meals);
     }
 
     @Override
