@@ -32,17 +32,17 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return crudRepository.deleteByIdAndUserId(id, userId) != 0;
+        return crudRepository.deleteByIdAndUser(id, crudUserRepository.getReferenceById(userId)) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return crudRepository.getByIdAndUserId(id, userId);
+        return crudRepository.getByIdAndUser(id, crudUserRepository.getReferenceById(userId));
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudRepository.getAllByUserIdOrderByDateTimeDesc(userId);
+        return crudRepository.getAllByUserOrderByDateTimeDesc(crudUserRepository.getReferenceById(userId));
     }
 
     @Override
@@ -52,6 +52,6 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public Meal getWithUser(int id, int userId) {
-        return crudRepository.findByIdAndUserId(id, userId);
+        return crudRepository.findByIdAndUser(id, crudUserRepository.getReferenceById(userId));
     }
 }

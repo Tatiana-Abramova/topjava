@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,15 +15,15 @@ import java.util.List;
 public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
 
     @Transactional
-    int deleteByIdAndUserId(int id, int userId);
+    int deleteByIdAndUser(int id, User user);
 
-    Meal getByIdAndUserId(int id, int userId);
+    Meal getByIdAndUser(int id, User user);
 
-    List<Meal> getAllByUserIdOrderByDateTimeDesc(int userId);
+    List<Meal> getAllByUserOrderByDateTimeDesc(User user);
 
     @Query(name = Meal.GET_BETWEEN)
     List<Meal> getBetweenHalfOpen(@Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime, @Param("userId") int userId);
 
     @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.LOAD)
-    Meal findByIdAndUserId(int id, int userId);
+    Meal findByIdAndUser(int id, User user);
 }

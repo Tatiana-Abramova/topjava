@@ -5,10 +5,8 @@ import ru.javawebinar.topjava.model.User;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
-import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
 public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator("registered", "roles", "meals");
@@ -23,12 +21,16 @@ public class UserTestData {
     public static final User user = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
     public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN);
     public static final User guest = new User(GUEST_ID, "Guest", "guest@gmail.com", "guest");
-    public static final User userWithEmptyMeals = new User(GUEST_ID, "Guest", "guest@gmail.com", "guest", DEFAULT_CALORIES_PER_DAY, true, new Date(), Collections.emptyList(), Collections.emptyList());
-    public static final User userWithMeals = new User(USER_ID, "User", "user@yandex.ru", "password", DEFAULT_CALORIES_PER_DAY, true, new Date(), List.of(Role.USER), MealTestData.meals);
+    public static final User userWithEmptyMeals = new User(guest);
+    public static final User userWithMeals = new User(user);
 
+    static {
+        userWithEmptyMeals.setMeals(Collections.emptyList());
+        userWithMeals.setMeals(MealTestData.meals);
+    }
 
     public static User getNew() {
-        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER), null);
+        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
     }
 
     public static User getUpdated() {
