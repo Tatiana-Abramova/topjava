@@ -5,15 +5,14 @@
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <head>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../resources/css/style.css">  //если убрать этот тэг, то стили не подгружаются
 </head>
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
-<h3><spring:message code="meal.title"/></h3>
 <section>
-    <h2><spring:message code='${param.action == "create" ? "meal.create" : "meal.edit"}'/></h2>
+    <h2><spring:message code='${pageContext.request.pathInfo eq "create" ? "meal.create" : "meal.edit"}'/></h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="meals">
+    <form method="post" action="${requestScope['javax.servlet.forward.servlet_path'].contains('create') ? 'create' : 'update'}">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.dateTime"/>:</dt>

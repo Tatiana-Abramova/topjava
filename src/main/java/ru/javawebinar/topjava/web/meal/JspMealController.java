@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +12,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -24,25 +24,24 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 @RequestMapping(value = "/meals")
 public class JspMealController extends AbstractMealController {
 
-    private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
-
     public JspMealController(MealService service) {
         super(service);
+        clazz = JspMealController.class;
     }
 
-    @GetMapping(params = "!action")
+    @GetMapping
     public String getAll(Model model) {
         model.addAttribute("meals", super.getAll());
         return "meals";
     }
 
-    @GetMapping(params = "action=delete") // не поняла как здесь можно обойтись без параметра action
+    @GetMapping(path = "/delete")
     public String delete(@RequestParam Integer id) {
         super.delete(id);
-        return "redirect:meals";
+        return "redirect:/meals";
     }
 
-    @GetMapping(params = {"action=create"})
+    @GetMapping(path = "/create")
     public String getCreateForm(Model model) {
         int userId = SecurityUtil.authUserId();
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
@@ -51,17 +50,18 @@ public class JspMealController extends AbstractMealController {
         return "mealForm";
     }
 
-    @PostMapping(params = {"id="})
+    @PostMapping(path = "/create")
     public String create(
-            @RequestParam String dateTime,
+            @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") @RequestParam LocalDateTime dateTime,
             @RequestParam String description,
-            @RequestParam Integer calories) throws UnsupportedEncodingException {
-        super.create(new Meal(LocalDateTime.parse(dateTime), description, calories));
-        return "redirect:meals";
+            @RequestParam int calories, HttpServletRequest request) throws UnsupportedEncodingException {
+        request.getRequestURL();
+        super.create(new Meal(dateTime, description, calories));
+        return "redirect:/meals";
     }
 
-    @GetMapping(params = {"action=update"})
-    public String getUpdateForm(@RequestParam Integer id, Model model) {
+    @GetMapping(path = "/update")
+    public String getUpdateForm(@RequestParam int id, Model model) {
         int userId = SecurityUtil.authUserId();
         Meal meal = super.get(id);
         log.info("fill meal form {} for user {}", meal, userId);
@@ -69,14 +69,14 @@ public class JspMealController extends AbstractMealController {
         return "mealForm";
     }
 
-    @PostMapping
+    @PostMapping(path = "/update")
     public String update(
-            @RequestParam Integer id,
-            @RequestParam String dateTime,
-            @RequestParam String description, // кодировка
-            @RequestParam Integer calories) throws UnsupportedEncodingException {
-        super.update(new Meal(id, LocalDateTime.parse(dateTime), description, calories), id);
-        return "redirect:meals";
+            @RequestParam int id,
+            @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") @RequestParam LocalDateTime dateTime,
+            @RequestParam String description,
+            @RequestParam int calories) throws UnsupportedEncodingException {
+        super.update(new Meal(id, dateTime, description, calories), id);
+        return "redirect:/meals";
     }
 
     @GetMapping(params = {"action=filter"})
