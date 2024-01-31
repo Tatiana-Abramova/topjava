@@ -8,6 +8,5 @@ public class MealRestController extends AbstractMealController {
 
     public MealRestController(MealService service) {
         super(service);
-        clazz = MealRestController.class;
     }
 }

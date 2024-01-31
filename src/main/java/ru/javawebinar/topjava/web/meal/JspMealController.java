@@ -26,7 +26,6 @@ public class JspMealController extends AbstractMealController {
 
     public JspMealController(MealService service) {
         super(service);
-        clazz = JspMealController.class;
     }
 
     @GetMapping
@@ -36,7 +35,7 @@ public class JspMealController extends AbstractMealController {
     }
 
     @GetMapping(path = "/delete")
-    public String delete(@RequestParam Integer id) {
+    public String deleteMeal(@RequestParam int id) {
         super.delete(id);
         return "redirect:/meals";
     }
@@ -55,7 +54,6 @@ public class JspMealController extends AbstractMealController {
             @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") @RequestParam LocalDateTime dateTime,
             @RequestParam String description,
             @RequestParam int calories, HttpServletRequest request) throws UnsupportedEncodingException {
-        request.getRequestURL();
         super.create(new Meal(dateTime, description, calories));
         return "redirect:/meals";
     }
@@ -79,7 +77,7 @@ public class JspMealController extends AbstractMealController {
         return "redirect:/meals";
     }
 
-    @GetMapping(params = {"action=filter"})
+    @GetMapping(path = "filter")
     public String getBetween(@Nullable @RequestParam String startDate, @Nullable @RequestParam String startTime,
                              @Nullable @RequestParam String endDate, @Nullable @RequestParam String endTime,
                              Model model) {

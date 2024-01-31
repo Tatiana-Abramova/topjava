@@ -103,7 +103,7 @@ public class JdbcUserRepository implements UserRepository {
     public User getByEmail(String email) {
         List<User> users = jdbcTemplate.query(
                 "SELECT * FROM users u LEFT JOIN user_role r on u.id = r.user_id WHERE email=?", this::extractUsers, email);
-        return DataAccessUtils.uniqueResult(users); // по поводу uniqueResult не совсем поняла идею. У нас есть уникальный индекс на email, т.е. этот запрос всегда вернет уникального пользователя
+        return DataAccessUtils.singleResult(users);
     }
 
     @Override

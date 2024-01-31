@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.jpa;
 
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
@@ -67,10 +68,8 @@ public class JpaUserRepository implements UserRepository {
         if (users.isEmpty()) {
             return null;
         }
-        Set<Role> roles = users.stream().flatMap(u -> u.getRoles().stream()).collect(Collectors.toSet());
-        User user = users.get(0);
-        user.setRoles(roles);
-        return user;
+
+        return DataAccessUtils.uniqueResult(users);
     }
 
     @Override
