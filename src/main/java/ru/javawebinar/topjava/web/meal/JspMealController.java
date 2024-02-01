@@ -84,6 +84,6 @@ public class JspMealController extends AbstractMealController {
         model.addAttribute(
                 "meals",
                 super.getBetween(parseLocalDate(startDate), parseLocalTime(startTime), parseLocalDate(endDate), parseLocalTime(endTime)));
-        return "meals";
+        return "/meals";
     }
 }
