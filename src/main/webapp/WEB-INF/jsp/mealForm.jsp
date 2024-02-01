@@ -9,7 +9,7 @@
 <section>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <h2><spring:message code='${meal.id eq null ? "meal.create" : "meal.edit"}'/></h2>
-    <form method="post" action="${requestScope['javax.servlet.forward.servlet_path'].contains('create') ? 'create' : 'update'}">
+    <form method="post" action="${requestScope['javax.servlet.forward.servlet_path'].substring(1)}">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.dateTime"/>:</dt>
