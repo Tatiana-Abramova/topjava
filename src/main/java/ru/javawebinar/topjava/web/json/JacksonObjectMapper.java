@@ -11,7 +11,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 /**
  * <p>
  * Handling Hibernate lazy-loading
- *
  * @link https://github.com/FasterXML/jackson
  * @link https://github.com/FasterXML/jackson-datatype-hibernate
  * @link https://github.com/FasterXML/jackson-docs/wiki/JacksonHowToCustomSerializers
