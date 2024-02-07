@@ -2,6 +2,7 @@ package ru.javawebinar.topjava;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
@@ -26,13 +27,13 @@ public class MealTestData {
     public static final Meal meal6 = new Meal(MEAL1_ID + 5, of(2020, Month.JANUARY, 31, 13, 0), "Обед", 1000);
     public static final Meal meal7 = new Meal(MEAL1_ID + 6, of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 510);
 
-    public static final MealTo mealTo1 = getTo(meal1, false);
-    public static final MealTo mealTo2 = getTo(meal2, false);
-    public static final MealTo mealTo3 = getTo(meal3, false);
-    public static final MealTo mealTo4 = getTo(meal4, true);
-    public static final MealTo mealTo5 = getTo(meal5, true);
-    public static final MealTo mealTo6 = getTo(meal6, true);
-    public static final MealTo mealTo7 = getTo(meal7, true);
+    public static final MealTo mealTo1 = MealsUtil.createTo(meal1, false);
+    public static final MealTo mealTo2 = MealsUtil.createTo(meal2, false);
+    public static final MealTo mealTo3 = MealsUtil.createTo(meal3, false);
+    public static final MealTo mealTo4 = MealsUtil.createTo(meal4, true);
+    public static final MealTo mealTo5 = MealsUtil.createTo(meal5, true);
+    public static final MealTo mealTo6 = MealsUtil.createTo(meal6, true);
+    public static final MealTo mealTo7 = MealsUtil.createTo(meal7, true);
     public static final Meal adminMeal1 = new Meal(ADMIN_MEAL_ID, of(2020, Month.JANUARY, 31, 14, 0), "Админ ланч", 510);
     public static final Meal adminMeal2 = new Meal(ADMIN_MEAL_ID + 1, of(2020, Month.JANUARY, 31, 21, 0), "Админ ужин", 1500);
 
@@ -45,9 +46,5 @@ public class MealTestData {
 
     public static Meal getUpdated() {
         return new Meal(MEAL1_ID, meal1.getDateTime().plus(2, ChronoUnit.MINUTES), "Обновленный завтрак", 200);
-    }
-
-    private static MealTo getTo(Meal meal, boolean exceeded) {
-        return new MealTo(meal.id(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), exceeded);
     }
 }

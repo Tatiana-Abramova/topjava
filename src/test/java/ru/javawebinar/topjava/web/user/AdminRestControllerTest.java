@@ -90,14 +90,13 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(isDataJpaBased(), "Validation not supported (DATA JPA only)");
+        Assumptions.assumeTrue(isDataJpaBased(), "Test applicable for DATA JPA only");
         User expected = new User(admin);
         expected.setMeals(List.of(MealTestData.adminMeal2, MealTestData.adminMeal1));
         perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(admin))
                 .andExpect(USER_MEAL_MATCHER.contentJson(expected));
     }
 }

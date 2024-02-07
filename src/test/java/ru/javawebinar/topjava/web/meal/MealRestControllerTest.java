@@ -94,4 +94,30 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MEAL_TO_MATCHER.contentJson(mealTo6, mealTo5, mealTo4));
     }
+
+    @Test
+    void getBetweenEmptyFilter() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("startDate", "");
+        params.add("endDate", "");
+        params.add("startTime", "");
+        params.add("endTime", "");
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter").params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTos));
+    }
+
+    @Test
+    void getBetweenNullFilter() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("startDate", null);
+        params.add("endDate", null);
+        params.add("startTime", null);
+        params.add("endTime", null);
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter").params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTos));
+    }
 }

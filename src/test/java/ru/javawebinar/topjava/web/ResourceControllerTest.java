@@ -11,7 +11,7 @@ public class ResourceControllerTest extends AbstractControllerTest {
 
     @Test
     void getRoot() throws Exception {
-        perform(get("/resources/css/style.css")) // не очень поняла для чего такой тест. Просто проверить, что стили доступны?
+        perform(get("/resources/css/style.css"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/css;charset=UTF-8"));
