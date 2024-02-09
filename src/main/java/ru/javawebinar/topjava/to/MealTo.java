@@ -71,15 +71,15 @@ public class MealTo {
             return false;
         }
         MealTo mealTo = (MealTo) o;
-        return Objects.equals(this.getId(), mealTo.getId()) &&
+        return this.getCalories() == mealTo.getCalories() &&
+                this.isExcess() == mealTo.isExcess() &&
+                Objects.equals(this.getId(), mealTo.getId()) &&
                 Objects.equals(this.getDateTime(), mealTo.getDateTime()) &&
-                Objects.equals(this.getDescription(), mealTo.getDescription()) &&
-                this.getCalories() == mealTo.getCalories() &&
-                this.isExcess() == mealTo.isExcess();
+                Objects.equals(this.getDescription(), mealTo.getDescription());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getDateTime(), getDescription(), getCalories());
+        return Objects.hash(getId(), getDateTime(), getDescription(), getCalories(), isExcess());
     }
 }
