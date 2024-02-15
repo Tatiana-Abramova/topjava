@@ -30,6 +30,11 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
     }
 
     @Override
+    public boolean enable(boolean enable, int id) {
+        return false;
+    }
+
+    @Override
     public User getByEmail(String email) {
         Objects.requireNonNull(email, "email must not be null");
         return getCollection().stream()

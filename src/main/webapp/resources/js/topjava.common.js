@@ -22,6 +22,14 @@ function add() {
     $("#editRow").modal();
 }
 
+function edit(id, dateTime, desc, calories) {
+    form.find('input[name="id"]').val(id);
+    form.find('input[name="dateTime"]').val(dateTime);
+    form.find('input[name="description"]').val(desc);
+    form.find('input[name="calories"]').val(calories);
+    $("#editRow").modal();
+}
+
 function deleteRow(id) {
     $.ajax({
         url: ctx.ajaxUrl + id,
@@ -34,8 +42,12 @@ function deleteRow(id) {
 
 function updateTable() {
     $.get(ctx.ajaxUrl, function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
+    updateDataTable(data);
     });
+}
+
+function updateDataTable(data) {
+    ctx.datatableApi.clear().rows.add(data).draw();
 }
 
 function save() {
