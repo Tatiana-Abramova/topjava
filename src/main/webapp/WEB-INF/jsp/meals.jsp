@@ -13,7 +13,7 @@
 <div class="jumbotron pt-4">
     <div class="container">
         <h3 class="text-center"><spring:message code="meal.title"/></h3>
-        <div id="filter">
+        <form id="filterForm">
             <dl>
                 <dt><spring:message code="meal.startDate"/>:</dt>
                 <dd><input type="date" name="startDate"></dd>
@@ -30,21 +30,22 @@
                 <dt><spring:message code="meal.endTime"/>:</dt>
                 <dd><input type="time" name="endTime"></dd>
             </dl>
-            <button class="btn btn-info btn-lg" onclick="filter($('input[name=\'startDate\']').val(),$('input[name=\'endDate\']').val(),$('input[name=\'startTime\']').val(),$('input[name=\'endTime\']').val())">
-                <span class="glyphicon glyphicon-filter"></span>
-                <spring:message code="meal.filter"/>
-            </button>
-            <button class="btn btn-info btn-lg" onclick="clearFilter()">
-                <span class="glyphicon glyphicon-remove"></span>
-                <spring:message code="meal.clear"/>
-            </button>
-            <hr>
-            <button class="btn btn-primary" onclick="add()">
-                <span class="fa fa-plus"></span>
-                <spring:message code="common.add"/>
-            </button>
-        </div>
-        <table class="table table-striped" id="datatable">
+        </form>
+       <button class="btn btn-info btn-lg" onclick="filter()">
+            <span class="glyphicon glyphicon-filter"></span>
+            <spring:message code="meal.filter"/>
+        </button>
+        <button class="btn btn-info btn-lg" onclick="clearFilter()">
+            <span class="glyphicon glyphicon-remove"></span>
+            <spring:message code="meal.clear"/>
+        </button>
+        <hr>
+        <button class="btn btn-primary" onclick="add()">
+            <span class="fa fa-plus"></span>
+            <spring:message code="common.add"/>
+        </button>
+        <hr>
+        <table class="table table-striped" id="datatable" data-order="[]">
             <thead>
                 <tr>
                     <th><spring:message code="meal.dateTime"/></th>
@@ -66,7 +67,7 @@
                         </td>
                         <td>${meal.description}</td>
                         <td>${meal.calories}</td>
-                        <td><a onclick="edit('${meal.id}','${meal.dateTime}','${meal.description}','${meal.calories}')"><span class="fa fa-pencil"></span></a></td>
+                        <td><a><span class="fa fa-pencil"></span></a></td>
                         <td><a class="delete"><span class="fa fa-remove"></span></a></td>
                     </tr>
                 </c:forEach>

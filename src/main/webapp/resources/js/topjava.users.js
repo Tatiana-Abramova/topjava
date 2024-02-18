@@ -48,13 +48,15 @@ $(function () {
 
 function toggle(enable, id) {
     $.ajax({
-        type: "PUT",
-        url: ctx.ajaxUrl + id + "?enabled=" + enable.checked,
-        contentType: "application/json; charset=UTF-8",
-        data: {enabled: enable.checked}, // не получается передать параметр через data, пробовала разные форматы. В браузере видно, что параметр передается, но контроллер его не видит
-    }).done(function () {
-        updateTable();
+        type: "POST",
+        url: ctx.ajaxUrl + id,
+        contentType: "application/x-www-form-urlencoded",
+        data: {enabled: enable.checked},
+    }).done(function (data) {
+        document.getElementById(id).className = enable.checked ? "" : "text-black-50";
         status = enable.checked ? "enabled" : "disabled"
-            successNoty("User " + status);
-    });
+        successNoty("User " + status);
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        enable.checked = !enable.checked;
+    })
 }

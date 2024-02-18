@@ -22,14 +22,6 @@ function add() {
     $("#editRow").modal();
 }
 
-function edit(id, dateTime, desc, calories) {
-    form.find('input[name="id"]').val(id);
-    form.find('input[name="dateTime"]').val(dateTime);
-    form.find('input[name="description"]').val(desc);
-    form.find('input[name="calories"]').val(calories);
-    $("#editRow").modal();
-}
-
 function deleteRow(id) {
     $.ajax({
         url: ctx.ajaxUrl + id,

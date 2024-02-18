@@ -31,7 +31,7 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
 
     @Override
     public boolean enable(boolean enable, int id) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
