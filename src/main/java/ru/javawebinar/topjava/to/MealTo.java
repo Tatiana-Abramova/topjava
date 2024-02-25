@@ -1,18 +1,37 @@
 package ru.javawebinar.topjava.to;
 
+import ru.javawebinar.topjava.util.DateTimeUtil;
+
+import javax.validation.constraints.*;
 import java.beans.ConstructorProperties;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MealTo extends BaseTo {
 
-    private final LocalDateTime dateTime;
+public class MealTo extends BaseTo implements Serializable {
 
-    private final String description;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    private final int calories;
+    @NotNull
+    @PastOrPresent
+    private LocalDateTime dateTime;
 
-    private final boolean excess;
+    @NotBlank
+    @Size(min = 3, max = 100)
+    private String description;
+
+    @NotNull
+    @Positive
+    private Integer calories;
+
+    private boolean excess;
+
+    public MealTo() {
+
+    }
 
     @ConstructorProperties({"id", "dateTime", "description", "calories", "excess"})
     public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
@@ -37,6 +56,27 @@ public class MealTo extends BaseTo {
 
     public boolean isExcess() {
         return excess;
+    }
+
+    /*
+     * Не поняла вот это как применить в задании для уже готового объекта:
+     * "Напомню, что параметры методов контроллера (в том числе собранные в объекты через Binding) парсятся конверторами спринга (@DateTimeFormat)"
+     * Сделала преобразование через сеттер.
+     * */
+    public void setDateTime(String dateTime) {
+        this.dateTime = DateTimeUtil.parseLocalDateTime(dateTime);
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCalories(Integer calories) {
+        this.calories = calories;
+    }
+
+    public void setExcess(boolean excess) {
+        this.excess = excess;
     }
 
     @Override

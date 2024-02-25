@@ -12,6 +12,16 @@ function makeEditable(datatableApi) {
     $.ajaxSetup({cache: false});
 }
 
+function formatDateTime(dateStr) {
+    let date = new Date(dateStr);
+    let day = ('0' + date.getDate()).slice(-2);
+    let month = ('0' + (date.getMonth() + 1)).slice(-2);
+    let year = date.getFullYear();
+    let hours = ('0' + date.getHours()).slice(-2);
+    let minutes = ('0' + date.getMinutes()).slice(-2);
+    return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
+}
+
 function add() {
     $("#modalTitle").html(i18n["addTitle"]);
     form.find(":input").val("");
@@ -23,6 +33,9 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
+        if(key === "dateTime") {
+            value = formatDateTime(value);
+        }
             form.find("input[name='" + key + "']").val(value);
         });
         $('#editRow').modal();

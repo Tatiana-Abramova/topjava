@@ -35,7 +35,7 @@ public class RootController {
     }
 
     @GetMapping("/meals")
-    public String getMeals(Model model) {
+    public String getMeals(Model model) { // "Проверьте в RootController.meals(), его нужно тоже поправить" - не поняла что тут нужно сделать
         log.info("meals");
         model.addAttribute("meals",
                 MealsUtil.getTos(mealService.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay()));
