@@ -10,6 +10,9 @@
 <script type="text/javascript" src="resources/js/topjava.common.js" defer></script>
 <script type="text/javascript" src="resources/js/topjava.meals.js" defer></script>
 <jsp:include page="fragments/bodyHeader.jsp"/>
+<jsp:include page="fragments/i18n.jsp">
+    <jsp:param name="entity" value="meal"/>
+</jsp:include>
 
 <div class="jumbotron pt-4">
     <div class="container">
@@ -21,19 +24,19 @@
                     <div class="row">
                         <div class="col-3">
                             <label for="startDate"><spring:message code="meal.startDate"/></label>
-                            <input class="form-control" type="text" name="startDate" id="startDate" onclick="pickDate(this)">
+                            <input class="form-control" type="text" name="startDate" id="startDate">
                         </div>
                         <div class="col-3">
                             <label for="endDate"><spring:message code="meal.endDate"/></label>
-                            <input class="form-control" type="text" name="endDate" id="endDate" onclick="pickDate(this)">
+                            <input class="form-control" type="text" name="endDate" id="endDate">
                         </div>
                         <div class="offset-2 col-2">
                             <label for="startTime"><spring:message code="meal.startTime"/></label>
-                            <input class="form-control" type="text" name="startTime" id="startTime" onclick="pickTime(this)">
+                            <input class="form-control" type="text" name="startTime" id="startTime">
                         </div>
                         <div class="col-2">
                             <label for="endTime"><spring:message code="meal.endTime"/></label>
-                            <input class="form-control" type="text" name="endTime" id="endTime" onclick="pickTime(this)">
+                            <input class="form-control" type="text" name="endTime" id="endTime">
                         </div>
                     </div>
                 </form>
@@ -81,7 +84,7 @@
 
                     <div class="form-group">
                         <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/></label>
-                        <input type="text"  id="dateTime" name="dateTime" onclick="pickDateTime(this)"
+                        <input type="text"  id="dateTime" name="dateTime"
                                placeholder="<spring:message code="meal.dateTime"/>">
                     </div>
 
@@ -113,8 +116,4 @@
 </div>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
-<script type="text/javascript">
-    i18n["addTitle"] = '<spring:message code="meal.add"/>';
-    i18n["editTitle"] = '<spring:message code="meal.edit"/>';
-</script>
 </html>

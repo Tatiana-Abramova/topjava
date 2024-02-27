@@ -12,14 +12,8 @@ function makeEditable(datatableApi) {
     $.ajaxSetup({cache: false});
 }
 
-function formatDateTime(dateStr) {
-    let date = new Date(dateStr);
-    let day = ('0' + date.getDate()).slice(-2);
-    let month = ('0' + (date.getMonth() + 1)).slice(-2);
-    let year = date.getFullYear();
-    let hours = ('0' + date.getHours()).slice(-2);
-    let minutes = ('0' + date.getMinutes()).slice(-2);
-    return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
+function formatDateTime(date) {
+    return date.substring(0, 16).replace('T', ' ');
 }
 
 function add() {

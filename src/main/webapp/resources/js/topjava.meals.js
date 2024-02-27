@@ -13,24 +13,34 @@ const ctx = {
     }
 };
 
+$(document).ready(function(){
+    $.datetimepicker.setLocale(locale);
+    $("#dateTime").datetimepicker({format:"Y-m-d H:i"});
+    $("#startTime").datetimepicker({datepicker:false,format:"H:i"});
+    $("#endTime").datetimepicker({datepicker:false,format:"H:i"});
+    $('#startDate').datetimepicker({
+      format:'Y-m-d',
+      onShow:function( ct ){
+       this.setOptions({
+        maxDate:jQuery('#endDate').val()?jQuery('#endDate').val():false
+       })
+      },
+      timepicker:false
+     });
+     $('#endDate').datetimepicker({
+      format:'Y-m-d',
+      onShow:function( ct ){
+       this.setOptions({
+        minDate:jQuery('#startDate').val()?jQuery('#startDate').val():false
+       })
+      },
+      timepicker:false
+     });
+});
+
 function clearFilter() {
     $("#filter")[0].reset();
     $.get(mealAjaxUrl, updateTableByData);
-}
-
-function pickDateTime(element) {
-    $.datetimepicker.setLocale(locale);
-    $("#" + element.id).datetimepicker({format:"Y-m-d H:i"});
-}
-
-function pickDate(element) {
-    $.datetimepicker.setLocale(locale);
-    $("#" + element.id).datetimepicker({timepicker:false,format:"Y-m-d"});
-}
-
-function pickTime(element) {
-    $.datetimepicker.setLocale(locale);
-    $("#" + element.id).datetimepicker({datepicker:false,format:"H:i"});
 }
 
 $(function () {
@@ -53,8 +63,7 @@ $(function () {
                     }
                 },
                 {
-                    "data": "description",
-
+                    "data": "description"
                 },
                 {
                     "data": "calories"
@@ -77,11 +86,7 @@ $(function () {
                 ]
             ],
             "createdRow": function (row, data, dataIndex) {
-                if (data.excess) {
-                    $(row).attr("data-meal-excess", true);
-                } else {
-                    $(row).attr("data-meal-excess", false);
-                }
+                $(row).attr("data-meal-excess", data.excess);
             }
         })
     );
