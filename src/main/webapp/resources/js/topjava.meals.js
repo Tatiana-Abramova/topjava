@@ -15,27 +15,49 @@ const ctx = {
 
 $(document).ready(function(){
     $.datetimepicker.setLocale(locale);
-    $("#dateTime").datetimepicker({format:"Y-m-d H:i"});
-    $("#startTime").datetimepicker({datepicker:false,format:"H:i"});
-    $("#endTime").datetimepicker({datepicker:false,format:"H:i"});
-    $('#startDate').datetimepicker({
-      format:'Y-m-d',
-      onShow:function( ct ){
-       this.setOptions({
-        maxDate:jQuery('#endDate').val()?jQuery('#endDate').val():false
-       })
-      },
-      timepicker:false
-     });
-     $('#endDate').datetimepicker({
-      format:'Y-m-d',
-      onShow:function( ct ){
-       this.setOptions({
-        minDate:jQuery('#startDate').val()?jQuery('#startDate').val():false
-       })
-      },
-      timepicker:false
-     });
+    $("#dateTime").datetimepicker({format: "Y-m-d H:i"});
+
+    startDate = $('#startDate');
+    endDate = $('#endDate');
+    startDate.datetimepicker({
+        format: 'Y-m-d',
+        onShow: function( ct ){
+            this.setOptions({
+            maxDate: endDate.val() ? endDate.val() : false
+            })
+        },
+        timepicker: false
+    });
+    endDate.datetimepicker({
+        format: 'Y-m-d',
+        onShow: function( ct ){
+            this.setOptions({
+            minDate: startDate.val() ? startDate.val() : false
+            })
+        },
+        timepicker: false
+    });
+
+    startTime = $('#startTime');
+    endTime = $('#endTime');
+    startTime.datetimepicker({
+        datepicker: false,
+        format: "H:i",
+        onShow: function( ct ){
+            this.setOptions({
+            maxTime: endTime.val() ? endTime.val() : false
+            })
+        }
+    });
+    endTime.datetimepicker({
+        datepicker: false,
+        format: "H:i",
+        onShow: function( ct ){
+            this.setOptions({
+            minTime: startTime.val() ? startTime.val() : false
+            })
+        }
+    });
 });
 
 function clearFilter() {
