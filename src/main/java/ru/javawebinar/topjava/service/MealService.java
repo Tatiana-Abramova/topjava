@@ -13,8 +13,6 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.atStartOfDayOrMin;
 import static ru.javawebinar.topjava.util.DateTimeUtil.atStartOfNextDayOrMax;
-import static ru.javawebinar.topjava.util.MealsUtil.createNewFromTo;
-import static ru.javawebinar.topjava.util.MealsUtil.updateFromTo;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -47,22 +45,8 @@ public class MealService {
         checkNotFoundWithId(repository.save(meal, userId), meal.id());
     }
 
-    @Transactional
-    public void update(MealTo mealTo, int userId) {
-        Assert.notNull(mealTo, "meal must not be null");
-        Meal meal = repository.get(mealTo.id(), userId);
-        Meal mealUpdated = updateFromTo(meal, mealTo);
-        checkNotFoundWithId(repository.save(mealUpdated, userId), meal.id());
-    }
-
     public Meal create(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
-        return repository.save(meal, userId);
-    }
-
-    public Meal create(MealTo mealTo, int userId) {
-        Assert.notNull(mealTo, "meal must not be null");
-        Meal meal = createNewFromTo(mealTo);
         return repository.save(meal, userId);
     }
 
