@@ -26,5 +26,13 @@
                 </button>
             </form:form>
         </sec:authorize>
+        <div class="dropdown">
+            <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+              <span id="selected">${(empty param.lang) ? "en/ru" : param.lang}</span><span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <a class="dropdown-item" href="/topjava/login?lang=en">English</a>
+            <a class="dropdown-item" href="/topjava/login?lang=ru">Русский</a>
+          </ul>
+        </div>
     </div>
 </nav>

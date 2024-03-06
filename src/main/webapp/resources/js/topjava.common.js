@@ -107,9 +107,12 @@ function renderDeleteBtn(data, type, row) {
 function failNoty(jqXHR) {
     closeNoty();
     var errorInfo = jqXHR.responseJSON;
+    var detail = errorInfo.detail.join("<br>");
+//    нужно ли заменять "не должно равняться null" на "не должно быть пустым" как это выводится в ДЕМО?
+    var errorTitle = jqXHR.status === 422 || jqXHR.status === 409 ? i18n["common.validationError"] :
+     i18n["common.errorStatus"] + ": " + jqXHR.status + "<br>" + errorInfo.type;
     failedNote = new Noty({
-        text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + i18n["common.errorStatus"] + ": " + jqXHR.status +
-            "<br>" + errorInfo.type + "<br>" + errorInfo.detail,
+        text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + errorTitle + "<br>" + detail,
         type: "error",
         layout: "bottomRight"
     });

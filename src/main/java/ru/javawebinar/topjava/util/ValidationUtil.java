@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.util;
 
 
 import org.springframework.core.NestedExceptionUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.HasId;
@@ -10,12 +9,22 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.*;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ValidationUtil {
 
     private static final Validator validator;
+
+    public static final String USER_UNIQUE_EMAIL_ERROR = "users_unique_email_idx";
+
+    public static final String MEAL_UNIQUE_DATE_TIME_ERROR = "meal_unique_user_datetime_idx";
+
+    public static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
+            USER_UNIQUE_EMAIL_ERROR, "user.uniqueEmailError",
+            MEAL_UNIQUE_DATE_TIME_ERROR, "meal.uniqueDatetime");
 
     static {
         //  From Javadoc: implementations are thread-safe and instances are typically cached and reused.
@@ -77,11 +86,9 @@ public class ValidationUtil {
         return rootCause != null ? rootCause : t;
     }
 
-    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
-        return ResponseEntity.unprocessableEntity().body(
-                result.getFieldErrors().stream()
-                        .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                        .collect(Collectors.joining("<br>"))
-        );
+    public static List<String> getErrorResponse(BindingResult result) {
+        return result.getFieldErrors().stream()
+                .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                .collect(Collectors.toList());
     }
 }

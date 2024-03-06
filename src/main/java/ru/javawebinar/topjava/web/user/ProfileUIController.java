@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -11,6 +12,8 @@ import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.validation.Valid;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
 @Controller
 @RequestMapping("/profile")
@@ -26,7 +29,11 @@ public class ProfileUIController extends AbstractUserController {
         if (result.hasErrors()) {
             return "profile";
         } else {
-            super.update(userTo, SecurityUtil.authUserId());
+            try {
+                super.update(userTo, SecurityUtil.authUserId());
+            } catch (DataIntegrityViolationException e) {
+                return handleUniqueEmailError(e, result);
+            }
             SecurityUtil.get().setTo(userTo);
             status.setComplete();
             return "redirect:/meals";
@@ -46,9 +53,32 @@ public class ProfileUIController extends AbstractUserController {
             model.addAttribute("register", true);
             return "profile";
         } else {
-            super.create(userTo);
+            try {
+                super.create(userTo);
+            } catch (DataIntegrityViolationException e) {
+                return handleUniqueEmailError(e, result, model);
+            }
             status.setComplete();
             return "redirect:/login?message=app.registered&username=" + userTo.getEmail();
         }
+    }
+
+    private String handleUniqueEmailError(DataIntegrityViolationException e, BindingResult result, ModelMap model) {
+        String rootMsg = getRootCause(e).getMessage();
+        if (rootMsg != null) {
+            String lowerCaseMsg = rootMsg.toLowerCase();
+            if (lowerCaseMsg.contains(USER_UNIQUE_EMAIL_ERROR)) {
+                result.rejectValue("email", CONSTRAINS_I18N_MAP.get(USER_UNIQUE_EMAIL_ERROR), "User with this email already exists");
+                if (model != null) {
+                    model.addAttribute("register", true);
+                }
+                return "profile";
+            }
+        }
+        throw e;
+    }
+
+    private String handleUniqueEmailError(DataIntegrityViolationException e, BindingResult result) {
+        return handleUniqueEmailError(e, result, null);
     }
 }

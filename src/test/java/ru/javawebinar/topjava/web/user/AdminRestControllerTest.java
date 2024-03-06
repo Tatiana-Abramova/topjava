@@ -5,17 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javawebinar.topjava.UserTestData;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
+import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.ErrorTestData.*;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -97,6 +102,34 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void updateValidationError() throws Exception {
+        ResultActions action = perform(MockMvcRequestBuilders.put(REST_URL + ADMIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(new User(), "")))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo actualError = ERROR_MATCHER.readFromJson(action);
+
+        ERROR_MATCHER.assertMatch(actualError, updateAdminErrorInfo);
+    }
+
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void updateDuplicateEmail() throws Exception {
+        UserTo newTo = new UserTo(null, "newName", "user@yandex.ru", "newPassword", 1500);
+        ResultActions action = perform(MockMvcRequestBuilders.put(REST_URL + ADMIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(newTo)))
+                .andExpect(status().isConflict());
+
+        ErrorInfo actualError = ERROR_MATCHER.readFromJson(action);
+
+        ERROR_MATCHER.assertMatch(actualError, duplicateEmailUpdateAdminErrorInfo);
+    }
+
+    @Test
     void createWithLocation() throws Exception {
         User newUser = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -110,6 +143,36 @@ class AdminRestControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
         USER_MATCHER.assertMatch(userService.get(newId), newUser);
+    }
+
+    @Test
+    void createWithLocationValidationError() throws Exception {
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(new User(), "")))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo actualError = ERROR_MATCHER.readFromJson(action);
+
+        ERROR_MATCHER.assertMatch(actualError, createAdminErrorInfo);
+    }
+
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void createWithLocationDuplicateEmail() throws Exception {
+        User newUser = getNew();
+        newUser.setEmail(user.getEmail());
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(newUser, newUser.getPassword())))
+                .andDo(print())
+                .andExpect(status().isConflict());
+
+        ErrorInfo actualError = ERROR_MATCHER.readFromJson(action);
+
+        ERROR_MATCHER.assertMatch(actualError, duplicateEmailCreateAdminErrorInfo);
     }
 
     @Test
