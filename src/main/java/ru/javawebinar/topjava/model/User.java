@@ -44,17 +44,6 @@ public class User extends AbstractNamedEntity {
     @Column(name = "password", nullable = false)
     @NotBlank
     @Size(min = 5, max = 128) // В UserTo max = 32
-    /*
-     * С созданием нового пользователя админом у меня странное поведение.
-     * Если отправить пустую форму, то получаю BindException и список ошибок как и надо
-     * Но если поменять ограничение размера пароля на max = 32 (в UserTo у нас 32) и заполнить все поля (и пароль в т.ч. размером между 5 и 32),
-     * то получаю:
-     * javax.validation.ConstraintViolationException: Validation failed for classes [ru.javawebinar.topjava.model.User] during persist time for groups [ru.javawebinar.topjava.View$Persist, ]\nList of constraint violations:[\n\tConstraintViolationImpl{interpolatedMessage='size must be between 5 and 32', propertyPath=password, rootBeanClass=class ru.javawebinar.topjava.model.User, messageTemplate='{javax.validation.constraints.Size.message}'}\n]
-     * которая обернута в org.springframework.transaction.TransactionSystemException
-     * и перехватывается только ExceptionInfoHandler#internalError
-     * Ну т.е. получается, что на контроллере валидация проходит, а при персисте в базу нет, т.к. пароль уже будет зашифрован?
-     * Т.е. получается, админ может создать юзера с паролем больше 32 символов (если оставить max=128). Это, наверное, не критично, но интересно
-     * как надо поступать подобной ситуации? Разрулить через группу, чтобы пароль проверялся только на контроллере?*/
     // https://stackoverflow.com/a/12505165/548473
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

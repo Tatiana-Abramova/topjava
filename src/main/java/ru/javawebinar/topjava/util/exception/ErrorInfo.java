@@ -11,7 +11,7 @@ import java.util.Objects;
 public class ErrorInfo {
     private final String url;
     private final ErrorType type;
-    private final List<String> detail;
+    private final List<String> details;
 
     @JsonCreator
     public ErrorInfo(
@@ -20,11 +20,11 @@ public class ErrorInfo {
             @JsonProperty("detail") List<String> detail) {
         this.url = url.toString();
         this.type = type;
-        this.detail = detail;
+        this.details = detail;
     }
 
     public String toString() {
-        return type + " at request " + url + ": " + detail;
+        return type + " at request " + url + ": " + details;
     }
 
     @Override
@@ -34,11 +34,11 @@ public class ErrorInfo {
         ErrorInfo errorInfo = (ErrorInfo) o;
         return type == errorInfo.type &&
                 Objects.equals(url, errorInfo.url) &&
-                Objects.equals(detail, errorInfo.detail);
+                Objects.equals(details, errorInfo.details);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, url, detail);
+        return Objects.hash(type, url, details);
     }
 }

@@ -1,4 +1,5 @@
 const mealAjaxUrl = "profile/meals/";
+const locale = i18n["app.locale"];
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
@@ -65,6 +66,7 @@ $(function () {
     });
 
 //  http://xdsoft.net/jqplugins/datetimepicker/
+    $.datetimepicker.setLocale(locale);
     var startDate = $('#startDate');
     var endDate = $('#endDate');
     const dateOptions = {

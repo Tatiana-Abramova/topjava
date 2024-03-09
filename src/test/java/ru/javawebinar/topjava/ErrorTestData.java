@@ -29,9 +29,9 @@ public class ErrorTestData {
 
     public static final ErrorInfo updateAdminErrorInfo = new ErrorInfo(ADMIN_REST_URL + ADMIN_ID, ErrorType.VALIDATION_ERROR, List.of("[password] must not be blank", "[email] must not be blank", "[password] size must be between 5 and 128", "[name] must not be blank"));
 
-    public static final ErrorInfo createUserErrorInfo = new ErrorInfo(USER_REST_URL, ErrorType.VALIDATION_ERROR, List.of("[password] must not be blank", "[email] must not be blank", "[password] size must be between 5 and 32", "[name] must not be blank"));
+    public static final ErrorInfo createUserErrorInfo = new ErrorInfo(USER_REST_URL, ErrorType.VALIDATION_ERROR, List.of("[password] must not be blank", "[email] must not be blank", "[password] Length must be between 5 and 32", "[name] must not be blank"));
 
-    public static final ErrorInfo updateUserErrorInfo = new ErrorInfo(USER_REST_URL, ErrorType.VALIDATION_ERROR, List.of("[password] must not be blank", "[email] must not be blank", "[password] size must be between 5 and 32", "[name] must not be blank"));
+    public static final ErrorInfo updateUserErrorInfo = new ErrorInfo(USER_REST_URL, ErrorType.VALIDATION_ERROR, List.of("[password] must not be blank", "[email] must not be blank", "[password] Length must be between 5 and 32", "[name] must not be blank"));
 
     public static final ErrorInfo duplicateDatetimeCreateMealErrorInfo = new ErrorInfo(MEAL_REST_URL, ErrorType.DATA_ERROR, List.of("Meal with this datetime already exists"));
 

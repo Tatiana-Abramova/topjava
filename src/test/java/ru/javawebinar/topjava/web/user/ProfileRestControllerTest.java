@@ -70,9 +70,11 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void registerValidationError() throws Exception {
+        UserTo userTo = new UserTo();
+        userTo.setPassword("");
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(new UserTo())))
+                .content(JsonUtil.writeValue(userTo)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
 
@@ -84,7 +86,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     @Test
     void registerDuplicateEmail() throws Exception {
-        UserTo newTo = new UserTo(null, "newName", "user@yandex.ru", "newPassword", 1500);
+        UserTo newTo = new UserTo(null, "newName", user.getEmail(), "newPassword", 1500);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTo)))
@@ -110,10 +112,12 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void updateValidationError() throws Exception {
+        UserTo userTo = new UserTo();
+        userTo.setPassword("");
         ResultActions action = perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
-                .content(JsonUtil.writeValue(new UserTo())))
+                .content(JsonUtil.writeValue(userTo)))
                 .andExpect(status().isUnprocessableEntity());
 
         ErrorInfo actualError = ERROR_MATCHER.readFromJson(action);
@@ -124,7 +128,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     @Test
     void updateDuplicateEmail() throws Exception {
-        UserTo newTo = new UserTo(null, "newName", "user@yandex.ru", "newPassword", 1500);
+        UserTo newTo = new UserTo(null, "newName", user.getEmail(), "newPassword", 1500);
         ResultActions action = perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))

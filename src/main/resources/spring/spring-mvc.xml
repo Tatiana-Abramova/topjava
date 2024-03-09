@@ -15,7 +15,7 @@
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
 
-    <mvc:annotation-driven conversion-service="conversionService">
+    <mvc:annotation-driven conversion-service="conversionService" validator="validator">
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="objectMapper" ref="objectMapper"/>
@@ -49,7 +49,7 @@
     <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
 
     <bean id="localeResolver"
-          class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+          class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
         <property name="defaultLocale" value="en" />
     </bean>
 
@@ -77,6 +77,12 @@
 
     <bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
         <constructor-arg ref="messageSource"/>
+    </bean>
+
+    <bean name="validator"  class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="validationMessageSource">
+            <ref bean="messageSource"/>
+        </property>
     </bean>
 
     <mvc:interceptors>

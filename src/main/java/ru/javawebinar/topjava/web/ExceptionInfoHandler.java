@@ -53,7 +53,7 @@ public class ExceptionInfoHandler {
             String lowerCaseMsg = rootMsg.toLowerCase();
             for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
                 if (lowerCaseMsg.contains(entry.getKey())) {
-                    return logAndGetErrorInfo(req, e, false, DATA_ERROR, messageSourceAccessor.getMessage(entry.getValue()));
+                    return logAndGetErrorInfo(req, false, DATA_ERROR, List.of(messageSourceAccessor.getMessage(entry.getValue())));
                 }
             }
         }
@@ -63,7 +63,11 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class, BindException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+        if (e instanceof BindException) {
+            return logAndGetErrorInfo(req, false, VALIDATION_ERROR, getErrorList(((BindException) e).getBindingResult()));
+        } else {
+            return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+        }
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -75,26 +79,22 @@ public class ExceptionInfoHandler {
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
 
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
-        return logAndGetErrorInfo(req, e, logException, errorType, null);
+        ErrorInfo errorInfo = new ErrorInfo(req.getRequestURL(), errorType, List.of(getRootCause(e).getMessage()));
+        logErrorInfo(errorInfo, logException);
+        return errorInfo;
     }
 
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String message) {
-        ErrorInfo errorInfo = new ErrorInfo(req.getRequestURL(), errorType, getErrorDetail(e, message));
+    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, boolean logException, ErrorType errorType, List<String> messages) {
+        ErrorInfo errorInfo = new ErrorInfo(req.getRequestURL(), errorType, messages);
+        logErrorInfo(errorInfo, logException);
+        return errorInfo;
+    }
+
+    private static void logErrorInfo(ErrorInfo errorInfo, boolean logException) {
         if (logException) {
             log.error(errorInfo.toString());
         } else {
             log.warn(errorInfo.toString());
-        }
-        return errorInfo;
-    }
-
-    private static List<String> getErrorDetail(Exception e, String message) {
-        if (message != null) {
-            return List.of(message);
-        } else if (e instanceof BindException) {
-            return getErrorResponse(((BindException) e).getBindingResult());
-        } else {
-            return List.of(getRootCause(e).toString());
         }
     }
 }

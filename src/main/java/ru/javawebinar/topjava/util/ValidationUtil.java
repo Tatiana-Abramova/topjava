@@ -86,7 +86,7 @@ public class ValidationUtil {
         return rootCause != null ? rootCause : t;
     }
 
-    public static List<String> getErrorResponse(BindingResult result) {
+    public static List<String> getErrorList(BindingResult result) {
         return result.getFieldErrors().stream()
                 .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
