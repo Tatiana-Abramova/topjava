@@ -42,7 +42,7 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
     public ErrorInfo notFoundError(HttpServletRequest req, NotFoundException e) {
-        return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
+        return logAndGetErrorInfo(req, false, DATA_NOT_FOUND, e);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
@@ -57,31 +57,31 @@ public class ExceptionInfoHandler {
                 }
             }
         }
-        return logAndGetErrorInfo(req, e, true, DATA_ERROR);
+        return logAndGetErrorInfo(req, true, DATA_ERROR, e);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
-    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class, BindException.class})
+    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
-        if (e instanceof BindException) {
-            return logAndGetErrorInfo(req, false, VALIDATION_ERROR, getErrorList(((BindException) e).getBindingResult()));
-        } else {
-            return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
-        }
+        return logAndGetErrorInfo(req, false, VALIDATION_ERROR, e);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
+    @ExceptionHandler({BindException.class})
+    public ErrorInfo bindError(HttpServletRequest req, Exception e) {
+        return logAndGetErrorInfo(req, false, VALIDATION_ERROR, getErrorList(((BindException) e).getBindingResult()));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorInfo internalError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, true, APP_ERROR);
+        return logAndGetErrorInfo(req, true, APP_ERROR, e);
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
 
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
-        ErrorInfo errorInfo = new ErrorInfo(req.getRequestURL(), errorType, List.of(getRootCause(e).getMessage()));
-        logErrorInfo(errorInfo, logException);
-        return errorInfo;
+    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, boolean logException, ErrorType errorType, Exception e) {
+        return logAndGetErrorInfo(req, logException, errorType, List.of(getRootCause(e).getMessage()));
     }
 
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, boolean logException, ErrorType errorType, List<String> messages) {
