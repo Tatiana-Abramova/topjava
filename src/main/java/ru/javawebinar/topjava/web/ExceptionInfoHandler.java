@@ -68,8 +68,8 @@ public class ExceptionInfoHandler {
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler({BindException.class})
-    public ErrorInfo bindError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, false, VALIDATION_ERROR, getErrorList(((BindException) e).getBindingResult()));
+    public ErrorInfo bindError(HttpServletRequest req, BindException e) {
+        return logAndGetErrorInfo(req, false, VALIDATION_ERROR, getErrorList((e).getBindingResult()));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
